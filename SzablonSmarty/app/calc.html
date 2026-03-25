@@ -1,0 +1,49 @@
+{extends file="../templates/main.html"}
+
+{block name=content}
+
+<h2 class="content-head is-center">Kalkulator kredytowy</h2>
+
+<div>
+    <div>
+        <form action="{$app_url}/index.php" method="post">
+            <fieldset>
+                <label for="id_kwota">Kwota:</label>
+                <input id="id_kwota" type="text" name="kwota" value="{$form['kwota']}">
+
+                <label for="id_lata">Lata:</label>
+                <input id="id_lata" type="text" name="lata" value="{$form['lata']}">
+
+                <label for="id_oprocentowanie">Oprocentowanie (%):</label>
+                <input id="id_oprocentowanie" type="text" name="oprocentowanie" value="{$form['oprocentowanie']}">
+
+                <button type="submit" style="margin: center">Oblicz ratę</button>
+            </fieldset>
+        </form>
+    </div>
+
+    <div >
+        {if $messages}
+            <div >
+                <ol>
+                {foreach $messages as $msg}
+                    <li>{$msg}</li>
+                {/foreach}
+                </ol>
+            </div>
+        {/if}
+
+        {if isset($result)}
+            <div>
+                <h4>Miesięczna rata:</h4>
+                <p>{$result} PLN</p>
+            </div>
+        {/if}
+    </div>
+</div>
+
+{/block}
+
+{block name=footer}
+    Autor: Konrad Kucharski
+{/block}
