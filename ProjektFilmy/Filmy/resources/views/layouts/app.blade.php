@@ -21,7 +21,10 @@
 
                 @auth
                     <a style="padding: 0 0.3rem;" href="{{ route('lista.index') }}" class="text-gray-300 hover:text-yellow-400 transition font-medium">Moja lista | </a>
-                    <a style="padding: 0 0.3rem;" href="{{ route('filmy.create') }}" class="text-gray-300 hover:text-yellow-400 transition font-medium">Dodaj film</a>
+                   <a href="{{ route('filmy.create') }}" class="text-gray-300 hover:text-yellow-400 transition font-medium">Dodaj film</a>
+                    @can('moderator')
+                        <a href="{{ route('gatunki.index') }}" class="text-gray-300 hover:text-yellow-400 transition font-medium">Gatunki</a>
+                    @endcan
 
                     @can('admin')
                         <a href="{{ route('admin.index') }}" class="text-red-400 hover:text-red-300 transition font-medium">⚙ Admin</a>
@@ -63,6 +66,6 @@
     <footer class="bg-gray-900 border-t border-yellow-500/20 text-gray-500 text-center py-4 mt-12">
         <p style= "text-align: center;">© {{ date('Y') }} MovieTracker — Konrad Kucharski</p>
     </footer>
-
+    @stack('scripts')
 </body>
 </html>

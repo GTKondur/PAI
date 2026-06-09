@@ -15,6 +15,7 @@ class User extends Authenticatable
         'email',
         'password',
         'rola',
+        'aktywny',
     ];
 
     protected $hidden = [
@@ -49,4 +50,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Recenzja::class, 'uzytkownik_id');
     }
+
+public function isAdmin(): bool
+{
+    return $this->rola === 'admin';
+}
+
+public function isModerator(): bool
+{
+    return in_array($this->rola, ['moderator', 'admin']);
+}
 }

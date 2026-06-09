@@ -29,6 +29,15 @@ class FilmController extends Controller
         $filmy = $query->latest()->paginate(12);
         $gatunki = Gatunek::orderBy('nazwa')->get();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html'          => view('filmy._lista', compact('filmy'))->render(),
+                'next_page_url' => $filmy->appends($request->query())->nextPageUrl(),
+                'current_page'  => $filmy->currentPage(),
+                'last_page'     => $filmy->lastPage(),
+        ]);
+}
+
         return view('filmy.index', compact('filmy', 'gatunki'));
     }
 

@@ -12,10 +12,8 @@
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-    {{-- Lewa kolumna --}}
     <div class="md:col-span-1">
 
-        {{-- Plakat --}}
         <div class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
             @if($film->plakat_url)
                 <img src="{{ $film->plakat_url }}" alt="{{ $film->tytul }}" class="w-full">
@@ -24,7 +22,6 @@
             @endif
         </div>
 
-        {{-- Dodaj do listy --}}
         @auth
         <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 mt-4">
             <h3 class="text-gray-300 font-semibold mb-3">📋 Moja lista</h3>
@@ -54,7 +51,6 @@
             @endif
         </div>
 
-        {{-- Ocena --}}
         <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 mt-4">
             <h3 class="text-gray-300 font-semibold mb-3">⭐ Moja ocena</h3>
             <form method="POST" action="{{ $mojOcena ? route('oceny.update', $film) : route('oceny.store', $film) }}">
@@ -77,10 +73,8 @@
 
     </div>
 
-    {{-- Prawa kolumna --}}
     <div class="md:col-span-2">
 
-        {{-- Nagłówek --}}
         <div class="mb-6">
             <div class="flex items-start justify-between">
                 <div>
@@ -115,7 +109,7 @@
             </div>
         </div>
 
-        {{-- Szczegóły --}}
+        
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-gray-800 border border-gray-700 rounded-lg p-3 text-center">
                 <p class="text-gray-500 text-xs mb-1">Rok</p>
@@ -136,7 +130,7 @@
             </div>
         </div>
 
-        {{-- Reżyser --}}
+        
         @if($film->rezyser)
         <div class="mb-4">
             <p class="text-gray-500 text-sm">Reżyser</p>
@@ -144,7 +138,7 @@
         </div>
         @endif
 
-        {{-- Opis --}}
+        
         @if($film->opis)
         <div class="mb-6">
             <h2 class="text-gray-300 font-semibold mb-2">Opis</h2>
@@ -152,7 +146,7 @@
         </div>
         @endif
 
-        {{-- Recenzje --}}
+        
         <div>
             <h2 class="text-xl font-bold text-gray-200 mb-4 border-b border-gray-700 pb-2">
                 💬 Recenzje
@@ -175,7 +169,8 @@
 
             @forelse($film->recenzje as $recenzja)
                 @if(!$recenzja->ukryta || auth()->user()?->rola === 'admin')
-                <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-3 {{ $recenzja->ukryta ? 'opacity-50 border-red-500/30' : '' }}">
+                                <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-3 {{ $recenzja->ukryta ? 'opacity-50 border-red-500/30' : '' }}"
+                    id="recenzja-{{ $recenzja->id }}">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-yellow-400 font-semibold text-sm">{{ $recenzja->uzytkownik->name }}</span>
                         <div class="flex items-center gap-2">
@@ -185,16 +180,64 @@
                             <span class="text-gray-500 text-xs">
                                 {{ \Carbon\Carbon::parse($recenzja->data_dodania)->format('d.m.Y') }}
                             </span>
-                            @if(auth()->id() === $recenzja->uzytkownik_id || auth()->user()?->rola === 'admin')
-                            <form method="POST" action="{{ route('recenzje.destroy', $recenzja) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-400 hover:text-red-300 text-xs transition">Usuń</button>
-                            </form>
+
+                            
+                            @if(auth()->id() === $recenzja->uzytkownik_id)
+                                <button onclick="toggleEdycja({{ $recenzja->id }})"
+                                    class="text-yellow-400 hover:text-yellow-300 text-xs transition">
+                                    ✏ Edytuj
+                                </button>
+                            @endif
+
+                           
+                            @if(in_array(auth()->user()?->rola, ['admin', 'moderator']))
+                                <form method="POST" action="{{ route('recenzje.ukryj', $recenzja) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit"
+                                        class="text-xs transition {{ $recenzja->ukryta ? 'text-green-400 hover:text-green-300' : 'text-orange-400 hover:text-orange-300' }}">
+                                        {{ $recenzja->ukryta ? 'Pokaż' : 'Ukryj' }}
+                                    </button>
+                                </form>
+                            @endif
+
+                            
+                            @if(auth()->id() === $recenzja->uzytkownik_id || in_array(auth()->user()?->rola, ['admin', 'moderator']))
+                                <form method="POST" action="{{ route('recenzje.destroy', $recenzja) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-400 hover:text-red-300 text-xs transition">Usuń</button>
+                                </form>
                             @endif
                         </div>
                     </div>
-                    <p class="text-gray-300 text-sm leading-relaxed">{{ $recenzja->tresc }}</p>
+
+                    
+                    <div id="tresc-{{ $recenzja->id }}">
+                        <p class="text-gray-300 text-sm leading-relaxed">{{ $recenzja->tresc }}</p>
+                    </div>
+
+                   
+                    @if(auth()->id() === $recenzja->uzytkownik_id)
+                        <div id="edycja-{{ $recenzja->id }}" class="hidden mt-3">
+                            <form method="POST" action="{{ route('recenzje.update', $recenzja) }}">
+                                @csrf
+                                @method('PATCH')
+                                <textarea name="tresc" rows="3"
+                                    class="w-full bg-gray-700 text-gray-100 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-yellow-400 resize-none text-sm">{{ $recenzja->tresc }}</textarea>
+                                <div class="flex gap-2 mt-2">
+                                    <button type="submit"
+                                        class="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-3 py-1 rounded text-sm transition">
+                                        Zapisz
+                                    </button>
+                                    <button type="button" onclick="toggleEdycja({{ $recenzja->id }})"
+                                        class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1 rounded text-sm transition">
+                                        Anuluj
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    @endif
                 </div>
                 @endif
             @empty
@@ -204,5 +247,15 @@
 
     </div>
 </div>
-
 @endsection
+
+@push('scripts')
+<script>
+function toggleEdycja(id) {
+    const tresc  = document.getElementById('tresc-'  + id);
+    const edycja = document.getElementById('edycja-' + id);
+    tresc.classList.toggle('hidden');
+    edycja.classList.toggle('hidden');
+}
+</script>
+@endpush

@@ -11,9 +11,18 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void {}
 
     public function boot(): void
-    {
-        Gate::define('admin', function (User $user) {
-            return $user->rola === 'admin';
-        });
-    }
+{
+   Gate::define('admin', function (User $user) {
+    return $user->rola === 'admin';
+});
+
+Gate::define('admin', function (User $user) {
+    return $user->rola === 'admin';
+});
+
+Gate::define('moderator', function (User $user) {
+    return in_array($user->rola, ['admin', 'moderator']);
+});
 }
+}
+
