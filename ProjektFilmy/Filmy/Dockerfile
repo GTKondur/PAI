@@ -28,7 +28,7 @@ COPY . .
 COPY .env.example .env
 
 # Zainstaluj zależności PHP
-RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction --verbose 2>&1 || (echo "COMPOSER FAILED" && cat /tmp/composer* 2>/dev/null && exit 1)
 
 # Zainstaluj zależności Node i zbuduj frontend
 RUN npm ci && npm run build
