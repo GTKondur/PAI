@@ -22,17 +22,12 @@ COPY . .
 
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
-RUN composer run-script post-autoload-dump || true
+RUN php artisan package:discover --ansi 2>/dev/null || true
 
 RUN npm ci && npm run build
 
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
-RUN chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
-
-RUN mkdir -p /var/www/html/database && \
-    touch /var/www/html/database/database.sqlite && \
-    chown -R www-data:www-data /var/www/html/database && \
-    chmod -R 777 /var/www/html/database
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
