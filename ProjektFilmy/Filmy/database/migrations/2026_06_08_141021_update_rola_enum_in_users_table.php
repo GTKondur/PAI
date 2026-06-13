@@ -9,11 +9,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE users MODIFY rola ENUM('user', 'moderator', 'admin') NOT NULL DEFAULT 'user'");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE users MODIFY rola ENUM('user', 'moderator', 'admin') NOT NULL DEFAULT 'user'");
+        }
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE users MODIFY rola ENUM('user', 'admin') NOT NULL DEFAULT 'user'");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE users MODIFY rola ENUM('user', 'admin') NOT NULL DEFAULT 'user'");
+        }
     }
 };
