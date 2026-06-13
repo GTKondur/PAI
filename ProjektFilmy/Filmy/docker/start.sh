@@ -19,7 +19,10 @@ php artisan key:generate --force
 # Uruchom migracje
 php artisan migrate --force
 
-# Zoptymalizuj
+sed -i 's|APP_URL=.*|APP_URL=https://filmy-app.salmonfield-6bcf4751.polandcentral.azurecontainerapps.io|' .env
+echo "ASSET_URL=https://filmy-app.salmonfield-6bcf4751.polandcentral.azurecontainerapps.io/" >> .env
+
+
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
