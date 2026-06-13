@@ -26,7 +26,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Zainstaluj zależności PHP
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction
 
 # Zainstaluj zależności Node i zbuduj frontend
 RUN npm ci && npm run build
