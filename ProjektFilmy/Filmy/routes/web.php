@@ -10,7 +10,10 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect()->route('filmy.index');
+    if (auth()->check()) {
+        return redirect()->route('filmy.index');
+    }
+    return redirect()->route('login');
 })->name('home');
 
 Route::get('/filmy', [FilmController::class, 'index'])->name('filmy.index');
