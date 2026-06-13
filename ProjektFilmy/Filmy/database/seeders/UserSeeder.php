@@ -1,11 +1,8 @@
 <?php
-
 namespace Database\Seeders;
-
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-
 class UserSeeder extends Seeder
 {
     public function run(): void
@@ -17,7 +14,13 @@ class UserSeeder extends Seeder
             'rola'     => 'admin',
             'aktywny'  => true,
         ]);
-
+        User::create([
+            'name'     => 'Moderator',
+            'email'    => 'mod@movietracker.pl',
+            'password' => Hash::make('mod1234'),
+            'rola'     => 'moderator',
+            'aktywny'  => true,
+        ]);
         User::create([
             'name'     => 'Jan Kowalski',
             'email'    => 'jan@movietracker.pl',
@@ -25,7 +28,6 @@ class UserSeeder extends Seeder
             'rola'     => 'user',
             'aktywny'  => true,
         ]);
-
         User::create([
             'name'     => 'Anna Nowak',
             'email'    => 'anna@movietracker.pl',
