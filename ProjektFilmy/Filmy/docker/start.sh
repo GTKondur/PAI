@@ -25,6 +25,14 @@ echo "SESSION_DRIVER=file" >> .env
 php artisan key:generate --force
 
 php artisan migrate --force --seed
+php artisan tinker --execute="
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+User::updateOrCreate(
+    ['email' => 'admin@movietracker.pl'],
+    ['name' => 'Admin', 'password' => Hash::make('admin1234'), 'rola' => 'admin', 'aktywny' => true]
+);
+"
 
 php artisan config:cache
 php artisan route:cache
